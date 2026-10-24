@@ -49,7 +49,7 @@ $('#identify').onclick=()=>{
  worker.onmessage=({data})=>{
   if(data.type==='progress'){$('#progress-bar').style.width=`${Math.max(4,Math.min(100,data.progress||0))}%`;status('正在下载模型文件，请稍候…');return;}
   finish();
-  if(data.type==='error'){status('模型加载或识别失败。请检查网络能否访问 Hugging Face，然后点击重试。');console.error(data.message);worker.terminate();worker=null;return;}
+  if(data.type==='error'){status('模型加载或识别失败，请重试。错误详情：'+data.message);console.error(data.message);worker.terminate();worker=null;return;}
   const ranks=rankAnimals(data.predictions),top=ranks[0];
   if(!top||top.score<.2){status('暂时无法确定：可能不在支持范围内，或照片主体不够清晰。请试试另一张。');return;}
   status(top.score<.5?'这个结果不太确定，建议换个角度再试。':'识别完成，一起认识这位朋友。');
