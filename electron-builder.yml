@@ -1,0 +1,21 @@
+appId: cn.animallens.desktop
+productName: AnimalLens
+copyright: Copyright © 2026 AnimalLens
+asar: true
+directories:
+  output: release
+files:
+  - dist/**/*
+  - desktop/**/*
+  - package.json
+# The browser bundle already contains the inference code. No native Node/CUDA runtime is needed.
+npmRebuild: false
+nodeGypRebuild: false
+win:
+  target:
+    - target: portable
+      arch: [x64]
+  signAndEditExecutable: false
+portable:
+  artifactName: AnimalLens-${version}-Windows-x64.exe
+  requestExecutionLevel: user

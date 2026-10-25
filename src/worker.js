@@ -8,5 +8,5 @@ self.onmessage = async ({data}) => {
   });
   const predictions=await classifier(data.image,{top_k:1000});
   self.postMessage({type:'result',predictions});
- } catch(error){self.postMessage({type:'error',message:error.message});}
+ } catch(error){console.error(error);self.postMessage({type:'error',message:error.message});}
 };
