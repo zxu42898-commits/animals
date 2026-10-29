@@ -25,11 +25,11 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: npm test
+      - run: ./scripts/ci-run.ps1 -Task test
       - run: npx playwright install chromium
-      - run: npm run test:camera
-      - run: npm run test:recognition
-      - run: npm run desktop:package
+      - run: ./scripts/ci-run.ps1 -Task 'test:camera'
+      - run: ./scripts/ci-run.ps1 -Task 'test:recognition'
+      - run: ./scripts/ci-run.ps1 -Task 'desktop:package'
       - run: node scripts/desktop-camera-smoke.mjs
       - uses: actions/upload-artifact@v4
         if: always()
