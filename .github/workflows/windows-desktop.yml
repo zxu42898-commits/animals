@@ -27,14 +27,16 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm test
       - run: npx playwright install chromium
+      - run: npm run test:camera
       - run: npm run test:recognition
+      - run: npm run desktop:package
+      - run: node scripts/desktop-camera-smoke.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: recognition-test-results
           path: test-results/
           if-no-files-found: ignore
-      - run: npm run desktop:package
       - uses: actions/upload-artifact@v4
         with:
           name: AnimalLens-Windows-x64

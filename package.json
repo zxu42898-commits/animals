@@ -1,6 +1,6 @@
 {
   "name": "animal-lens",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "test": "node --test",
     "desktop:package": "npm run build && electron-builder --win portable --x64",
-    "test:recognition": "npm run build && node scripts/recognition-smoke.mjs"
+    "test:recognition": "npm run build && node scripts/recognition-smoke.mjs",
+    "test:camera": "npm run build && node scripts/camera-smoke.mjs"
   },
   "devDependencies": {
     "@huggingface/transformers": "^3.8.1",

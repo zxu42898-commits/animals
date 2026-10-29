@@ -2,6 +2,7 @@ const {app,BrowserWindow,dialog}=require('electron');
 const path=require('node:path');
 const fs=require('node:fs/promises');
 const {startServer}=require('./server.cjs');
+const {isAppOrigin,canRequestCamera}=require('./permissions.cjs');
 let mainWindow,webServer;
 if(!app.requestSingleInstanceLock()) app.quit();
 else {
@@ -22,7 +23,8 @@ else {
    mainWindow.setMenu(null);
    mainWindow.webContents.setWindowOpenHandler(()=>({action:'deny'}));
    mainWindow.webContents.on('will-navigate',(event,target)=>{if(new URL(target).origin!==url)event.preventDefault();});
-   mainWindow.webContents.session.setPermissionRequestHandler((_wc,_permission,callback)=>callback(false));
+   mainWindow.webContents.session.setPermissionCheckHandler((wc,permission,origin,details)=>wc===mainWindow.webContents&&permission==='media'&&details.mediaType==='video'&&isAppOrigin(origin,url));
+   mainWindow.webContents.session.setPermissionRequestHandler((wc,permission,callback,details)=>callback(wc===mainWindow.webContents&&details.isMainFrame!==false&&canRequestCamera(permission,details.requestingUrl,url,details.mediaTypes)));
    await mainWindow.loadURL(url);
   } catch(error){dialog.showErrorBox('无法启动森野识物',error.message);app.quit();}
  });
