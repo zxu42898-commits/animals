@@ -8,6 +8,7 @@ const {server,url}=await startServer(path.resolve('dist'));
 let browser,activePage;
 let stage="launch browser";
 const results=[];
+const cameraErrors=[];
 try{
  browser=await chromium.launch({headless:true,args:['--use-fake-device-for-media-stream=device-count=2'],...(process.env.ANIMAL_TEST_CHROMIUM?{executablePath:process.env.ANIMAL_TEST_CHROMIUM}:{})});
  const context=await browser.newContext({permissions:['camera']});
@@ -25,7 +26,7 @@ try{
    terminate(){}
   };
  });
- const page=await context.newPage();activePage=page;stage="open preview";await page.goto(url);
+ const page=await context.newPage();page.on('console',m=>{if(m.type()==='error'){cameraErrors.push(m.text());console.error('Browser:',m.text());}});activePage=page;stage="open preview";await page.goto(url);
  await page.locator('#take-photo').click();
  await page.waitForFunction(()=>!document.querySelector('#capture-photo').disabled);
  assert.equal(await page.evaluate(()=>document.querySelector('#camera-video').srcObject.getAudioTracks().length),0);
@@ -78,8 +79,8 @@ try{
 }catch(error){
  await mkdir('test-results',{recursive:true});
  const status=await activePage?.locator('#camera-status').textContent().catch(()=>'unavailable');
- const message=`${stage}: ${error.message}; camera status: ${status}`;
- await writeFile('test-results/camera-error.json',JSON.stringify({stage,error:error.stack,status},null,2));
+ const message=`${stage}: ${error.message}; camera status: ${status}; browser: ${cameraErrors.join('; ')}`;
+ await writeFile('test-results/camera-error.json',JSON.stringify({stage,error:error.stack,status,cameraErrors},null,2));
  await activePage?.screenshot({path:'test-results/camera-error.png'}).catch(()=>{});
  console.error(`::error title=Camera check::${message.replaceAll('%','%25').replaceAll('\r','%0D').replaceAll('\n','%0A')}`);
  throw error;

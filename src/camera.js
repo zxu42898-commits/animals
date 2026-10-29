@@ -40,7 +40,7 @@ export function setupCamera({onCapture,onUpload}){
    switchCamera.hidden=devices.length<2;switchCamera.disabled=devices.length<2;
    capture.disabled=!(video.videoWidth&&video.videoHeight);document.querySelector('.camera-live').hidden=capture.disabled;
    message.textContent='将动物放入画面，点击「拍照并识别」。画面仅在本机处理，不录音。';
-  }catch(error){if(request===generation&&dialog.open){stopStream();fail(errors[error.name]||'摄像头启动失败，请重试或改用上传图片。');}}
+  }catch(error){console.error('Camera access failed:',error.name,error.message);if(request===generation&&dialog.open){stopStream();fail(errors[error.name]||'摄像头启动失败，请重试或改用上传图片。');}}
   finally{if(request===generation)opening=false;}
  }
  document.querySelector('#close-camera').onclick=close;
