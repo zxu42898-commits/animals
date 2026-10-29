@@ -10,7 +10,7 @@ let stage="launch browser";
 const results=[];
 const cameraErrors=[];
 try{
- browser=await chromium.launch({headless:true,args:['--use-fake-device-for-media-stream=device-count=2'],...(process.env.ANIMAL_TEST_CHROMIUM?{executablePath:process.env.ANIMAL_TEST_CHROMIUM}:{})});
+ browser=await chromium.launch({headless:true,args:['--use-fake-device-for-media-stream=device-count=2'],...(process.env.ANIMAL_TEST_CHROMIUM?{executablePath:process.env.ANIMAL_TEST_CHROMIUM}:{channel:'chromium'})});
  const context=await browser.newContext({permissions:['camera']});
  await context.addInitScript(()=>{
   window.__cameraStreams=[];

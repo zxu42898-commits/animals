@@ -9,6 +9,7 @@ on:
       - 'scripts/**'
       - 'tests/**'
       - 'index.html'
+      - 'vite.config.js'
       - 'package*.json'
       - 'electron-builder.yml'
       - '.github/workflows/windows-desktop.yml'

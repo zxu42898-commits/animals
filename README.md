@@ -104,3 +104,14 @@ npm run test:camera
 ```
 
 自动化测试使用 Chromium 虚拟摄像头验证真实 `getUserMedia` 流、双摄像头切换、拍照传入识别流程、关闭释放、等待授权时关闭以及手机布局；拒绝授权、无摄像头、设备占用场景使用注入错误测试提示。识别模型由独立的实际图片测试验证。Windows 构建还会启动打包后的 Electron 程序，使用虚拟摄像头检查其权限处理、预览和关闭释放。测试不等同于对每种实体摄像头的硬件验证。
+
+
+## 手机打开网页拍照识别
+
+手机无需 EXE 或 Node.js。项目已提供 GitHub Pages 的 HTTPS 发布工作流，并使用相对资源路径适配 `/animals/` 子目录。
+
+首次发布需要仓库拥有者打开 GitHub 仓库 **Settings → Pages → Build and deployment → Source**，选择 **GitHub Actions**。这是 GitHub 的站点开通设置，默认的工作流令牌不能代替仓库管理员开通站点，也无需提供账号密码或令牌。
+
+设置完成后，在 **Actions → Publish mobile web app** 选择 **Run workflow**，等待 build 和 deploy 均成功。打开部署记录给出的正式 HTTPS 地址（默认预期为 `https://zxu42898-commits.github.io/animals/`；以成功部署输出为准）。在手机浏览器里打开此地址，点击「实时拍照」并允许使用摄像头即可。支持手机自身前后镜头切换，拍下画面后在手机本地识别。
+
+如果没有部署成功，不要将预期地址当作已上线的网站。电脑上的 `localhost` 无法直接用于另一台手机；普通 HTTP 的局域网地址也不满足实时摄像头的安全上下文要求。手机首次下载 CLIP 模型会消耗网络流量，并且推理速度取决于设备性能。默认不包含手机画面传输到电脑的远程摄像头配对功能。

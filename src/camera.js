@@ -22,17 +22,18 @@ export function setupCamera({onCapture,onUpload}){
  async function start(deviceId){
   const request=++generation;opening=true;stopStream();capture.disabled=true;switchCamera.disabled=true;retry.hidden=true;
   message.textContent='正在打开摄像头，请允许摄像头访问…';
+  let stage='request camera';
   try{
    if(!window.isSecureContext)throw Object.assign(new Error(),{name:'SecurityError'});
    if(!navigator.mediaDevices?.getUserMedia){fail('当前浏览器不支持实时摄像头，请改用上传图片。');return;}
    const next=await navigator.mediaDevices.getUserMedia({audio:false,video:{width:{ideal:1280},height:{ideal:720},...(deviceId?{deviceId:{exact:deviceId}}:{facingMode:{ideal:'environment'}})}});
    if(request!==generation||!dialog.open){for(const track of next.getTracks())track.stop();return;}
-   stream=next;video.srcObject=next;
+   stage='attach preview';stream=next;video.srcObject=next;
    const track=next.getVideoTracks()[0];
    const settings=track.getSettings();currentDevice=settings.deviceId||deviceId||'';
    video.classList.toggle('mirrored',settings.facingMode==='user');
    track.addEventListener('ended',()=>{if(request===generation&&dialog.open){stopStream();fail('摄像头已断开，请检查连接后重试。');}});
-   await video.play();
+   stage='play preview';await video.play();
    if(request!==generation||!dialog.open)return;
    // Some browsers cannot enumerate cameras; the active preview can still be used.
    try{devices=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput');}catch{devices=[];}
@@ -40,7 +41,7 @@ export function setupCamera({onCapture,onUpload}){
    switchCamera.hidden=devices.length<2;switchCamera.disabled=devices.length<2;
    capture.disabled=!(video.videoWidth&&video.videoHeight);document.querySelector('.camera-live').hidden=capture.disabled;
    message.textContent='将动物放入画面，点击「拍照并识别」。画面仅在本机处理，不录音。';
-  }catch(error){console.error('Camera access failed:',error.name,error.message);if(request===generation&&dialog.open){stopStream();fail(errors[error.name]||'摄像头启动失败，请重试或改用上传图片。');}}
+  }catch(error){console.error('Camera access failed:',stage,error.name,error.message);if(request===generation&&dialog.open){stopStream();fail(errors[error.name]||'摄像头启动失败，请重试或改用上传图片。');}}
   finally{if(request===generation)opening=false;}
  }
  document.querySelector('#close-camera').onclick=close;
